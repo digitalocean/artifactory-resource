@@ -31,7 +31,8 @@ func (s Source) Validate() error {
 
 // Version contains the version data Concourse uses to determine if a build should run
 type Version struct {
-	UpdatedDate time.Time `json:"updated"`
+	SHA1     string    `json: "sha1"`
+	Modified time.Time `json:"modified"`
 }
 
 // CheckRequest is the data struct received from Concoruse by the resource check operation
