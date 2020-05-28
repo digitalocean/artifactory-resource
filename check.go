@@ -36,17 +36,17 @@ func Check(req CheckRequest) (CheckResponse, error) {
 			return nil, err
 		}
 
-		res = append(res, Version{SHA1: i.Actual_Sha1, Modified: m})
+		res = append(res, Version{Repo: i.Repo, Path: i.Path, Name: i.Name, Modified: m})
 	}
 
 	// If there are no new but an old version = return the old
-	if len(res) == 0 && req.Version.SHA1 != "" {
+	if len(res) == 0 && req.Version.Repo != "" {
 		log.Println("no new versions, use old")
 		res = append(res, req.Version)
 	}
 
 	// If there are new versions and no previous = return just the latest
-	if len(res) != 0 && req.Version.SHA1 == "" {
+	if len(res) != 0 && req.Version.Repo == "" {
 		res = CheckResponse{res[len(res)-1]}
 	}
 

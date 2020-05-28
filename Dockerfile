@@ -1,0 +1,16 @@
+FROM golang:1.14 as builder
+ADD . /go/src/github.com/digitalocean/artifactory-resource
+WORKDIR /go/src/github.com/digitalocean/artifactory-resource
+RUN make build
+
+FROM alpine:3.11 as resource
+COPY --from=builder /go/src/github.com/digitalocean/artifactory-resource/build /opt/resource
+RUN ln -s /opt/resource/get /opt/resource/in
+RUN ln -s /opt/resource/put /opt/resource/out
+RUN apk add --update --no-cache \
+    git \
+    openssh \
+    && chmod +x /opt/resource/*
+
+FROM resource
+LABEL MAINTAINER=digitalocean

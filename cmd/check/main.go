@@ -3,13 +3,16 @@ package main
 import (
 	"log"
 
-	rlog "github.com/digitalocean/concourse-resource-library/log"
 	resource "github.com/digitalocean/artifactory-resource"
+	rlog "github.com/digitalocean/concourse-resource-library/log"
+	jlog "github.com/jfrog/jfrog-client-go/utils/log"
 )
 
 func main() {
 	input := rlog.WriteStdin()
 	defer rlog.Close()
+
+	jlog.SetLogger(jlog.NewLogger(jlog.DEBUG, log.Writer()))
 
 	var request resource.CheckRequest
 	err := request.Read(input)
