@@ -4,13 +4,9 @@ WORKDIR /go/src/github.com/digitalocean/artifactory-resource
 RUN make build
 
 FROM alpine:3.11 as resource
+RUN apk add --update --no-cache git openssh
 COPY --from=builder /go/src/github.com/digitalocean/artifactory-resource/build /opt/resource
-RUN ln -s /opt/resource/get /opt/resource/in
-RUN ln -s /opt/resource/put /opt/resource/out
-RUN apk add --update --no-cache \
-    git \
-    openssh \
-    && chmod +x /opt/resource/*
+RUN ln -s /opt/resource/get /opt/resource/in && ln -s /opt/resource/put /opt/resource/out && chmod +x /opt/resource/*
 
 FROM resource
 LABEL MAINTAINER=digitalocean

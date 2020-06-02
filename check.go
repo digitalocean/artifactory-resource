@@ -1,6 +1,7 @@
 package resource
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -15,9 +16,11 @@ func Check(req CheckRequest) (CheckResponse, error) {
 		return nil, err
 	}
 
-	log.Println("query:", req.Source.AQL)
+	aql := addModifiedTime(req.Source.AQL, req.Version)
 
-	data, err := c.SearchItems(req.Source.AQL)
+	log.Println("query:", aql)
+
+	data, err := c.SearchItems(aql)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -84,4 +87,18 @@ func selectVersions(v Version, res CheckResponse) CheckResponse {
 	}
 
 	return res
+}
+
+func addModifiedTime(aql string, v Version) string {
+	m := time.Now().AddDate(-2, 0, 0)
+
+	if !v.Modified.IsZero() {
+		m = v.Modified
+	}
+
+	if len(aql) < 1 {
+		return ""
+	}
+
+	return fmt.Sprintf("%s, \"modified\": {\"$gt\": \"%s\"}}", aql[:len(aql)-1], m.Format(time.RFC3339))
 }

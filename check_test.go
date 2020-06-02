@@ -198,3 +198,32 @@ func TestSelectVersions(t *testing.T) {
 		})
 	}
 }
+
+func TestAddModifiedTime(t *testing.T) {
+	tests := []struct {
+		description string
+		aql         string
+		version     Version
+		expected    string
+	}{
+		{
+			description: "empty aql",
+			aql:         "",
+			version:     Version{},
+			expected:    "",
+		},
+		{
+			description: "simple",
+			aql:         `{"repo": "artifacts-local", "path": {"$match" : "changeset/*"}, "name": "artifact"}`,
+			version:     Version{Modified: time.Date(2020, time.May, 26, 0, 0, 0, 0, time.UTC)},
+			expected:    `{"repo": "artifacts-local", "path": {"$match" : "changeset/*"}, "name": "artifact", "modified": {"$gt": "2020-05-26T00:00:00Z"}}`,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.description, func(t *testing.T) {
+			out := addModifiedTime(tc.aql, tc.version)
+			Expect(t, out).To(Equal(tc.expected))
+		})
+	}
+}
