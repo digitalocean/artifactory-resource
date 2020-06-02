@@ -3,38 +3,37 @@ package resource
 import (
 	"errors"
 	"log"
-
-	"github.com/digitalocean/concourse-resource-library/artifactory"
 )
 
 // Get performs the get operation for the resource
 func Get(req GetRequest, dir string) (GetResponse, error) {
-	c, err := artifactory.NewClient(
-		artifactory.Endpoint(req.Source.Endpoint),
-		artifactory.Authentication(req.Source.User, req.Source.Password, req.Source.APIKey, req.Source.AccessToken),
-	)
+	var res GetResponse
+
+	c, err := newClient(req.Source)
 	if err != nil {
 		log.Println(err)
-		return GetResponse{}, err
+		return res, err
 	}
 
 	log.Println("version pattern:", req.Version.Pattern())
+	log.Println(dir)
 
 	artifacts, err := c.DownloadItems(req.Version.Pattern(), dir)
 	if err != nil {
 		log.Println(err)
-		return GetResponse{}, err
+		return res, err
 	}
 
 	if len(artifacts) == 0 {
 		err := errors.New("no artifacts found")
 		log.Println(err)
-		return GetResponse{}, err
+		return res, err
 	}
 
-	res := GetResponse{
+	a := artifacts[0]
+	res = GetResponse{
 		Version:  req.Version,
-		Metadata: metadata(artifacts[0]),
+		Metadata: metadata(a),
 	}
 
 	return res, nil

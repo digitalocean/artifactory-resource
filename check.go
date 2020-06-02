@@ -4,17 +4,12 @@ import (
 	"log"
 	"time"
 
-	"github.com/digitalocean/concourse-resource-library/artifactory"
+	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 )
 
 // Check performs the check operation for the resource
 func Check(req CheckRequest) (CheckResponse, error) {
-	var res CheckResponse
-
-	c, err := artifactory.NewClient(
-		artifactory.Endpoint(req.Source.Endpoint),
-		artifactory.Authentication(req.Source.User, req.Source.Password, req.Source.APIKey, req.Source.AccessToken),
-	)
+	c, err := newClient(req.Source)
 	if err != nil {
 		log.Println(err)
 		return nil, err
@@ -30,28 +25,63 @@ func Check(req CheckRequest) (CheckResponse, error) {
 
 	log.Println(data)
 
-	for _, i := range data {
-		m, err := time.Parse(time.RFC3339, i.Modified)
-		if err != nil {
-			return nil, err
-		}
-
-		res = append(res, Version{Repo: i.Repo, Path: i.Path, Name: i.Name, Modified: m})
+	res, err := processItems(data)
+	if err != nil {
+		log.Println(err)
+		return nil, err
 	}
 
-	// If there are no new but an old version = return the old
-	if len(res) == 0 && req.Version.Repo != "" {
-		log.Println("no new versions, use old")
-		res = append(res, req.Version)
-	}
-
-	// If there are new versions and no previous = return just the latest
-	if len(res) != 0 && req.Version.Repo == "" {
-		res = CheckResponse{res[len(res)-1]}
-	}
+	res = selectVersions(req.Version, res)
 
 	log.Println("version count in response:", len(res))
 	log.Println("versions:", res)
 
 	return res, nil
+}
+
+func processItems(s []utils.ResultItem) (CheckResponse, error) {
+	var res CheckResponse
+
+	for _, i := range s {
+		v, err := processItem(i)
+		if err != nil {
+			return nil, err
+		}
+
+		res = append(res, v)
+	}
+
+	return res, nil
+}
+
+func processItem(i utils.ResultItem) (Version, error) {
+	var v Version
+
+	m, err := time.Parse(time.RFC3339, i.Modified)
+	if err != nil {
+		return v, err
+	}
+
+	v = Version{Repo: i.Repo, Path: i.Path, Name: i.Name, Modified: m}
+
+	return v, nil
+}
+
+// selectVersions handles business logic based on input version
+// 	from Concourse and versions found in external resource
+func selectVersions(v Version, res CheckResponse) CheckResponse {
+	// If there are no new but an input version, return the input
+	if len(res) == 0 && v.Repo != "" {
+		log.Println("no new versions, use input version")
+		res = append(res, v)
+
+	}
+
+	// If there are new versions and no input version, return latest new version
+	if len(res) != 0 && v.Repo == "" {
+		log.Println("new versions but no input version, use latest")
+		res = CheckResponse{res[len(res)-1]}
+	}
+
+	return res
 }

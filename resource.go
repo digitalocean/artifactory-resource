@@ -61,16 +61,9 @@ func (r CheckResponse) Write() error {
 	return json.NewEncoder(os.Stdout).Encode(r)
 }
 
-// GitParameters provides
-type GitParameters struct {
-	Clone bool `json:"clone"` // Clone enables the cloning of the repository associated with the artifact
-	Depth int  `json:"depth"` // Depth determines how many commits to include in the clone
-}
-
 // GetParameters is the configuration for a resource step
 type GetParameters struct {
-	SkipDownload bool          `json:"skip_download"` // SkipDownload is used with `put` steps to skip `get` step that Concourse runs by default
-	Git          GitParameters `json:"git,omitempty"`
+	SkipDownload bool `json:"skip_download"` // SkipDownload is used with `put` steps to skip `get` step that Concourse runs by default
 }
 
 // GetRequest is the data struct received from Concoruse by the resource get operation
