@@ -3,6 +3,7 @@ package resource
 import (
 	"errors"
 	"log"
+	"os"
 )
 
 // Get performs the get operation for the resource
@@ -15,10 +16,10 @@ func Get(req GetRequest, dir string) (GetResponse, error) {
 		return res, err
 	}
 
-	log.Println("version pattern:", req.Version.Pattern())
 	log.Println(dir)
+	log.Println("version pattern:", req.Version.Pattern())
 
-	artifacts, err := c.DownloadItems(req.Version.Pattern(), dir)
+	artifacts, err := c.DownloadItems(req.Version.Pattern(), dir+string(os.PathSeparator))
 	if err != nil {
 		log.Println(err)
 		return res, err

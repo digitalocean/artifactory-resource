@@ -91,7 +91,10 @@ func (r GetResponse) Write() error {
 
 // PutParameters for the resource
 type PutParameters struct {
-	Get GetParameters `json:"get"`
+	Pattern        string        `json:"pattern"`
+	Target         string        `json:"target"`
+	RepositoryPath string        `json:"repo_path,omitempty"`
+	Get            GetParameters `json:"get,omitempty"`
 }
 
 // PutRequest is the data struct received from Concoruse by the resource put operation
