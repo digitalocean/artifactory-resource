@@ -94,6 +94,7 @@ type PutParameters struct {
 	Pattern        string        `json:"pattern"`
 	Target         string        `json:"target"`
 	RepositoryPath string        `json:"repo_path,omitempty"`
+	Repository     string        `json:"repo,omitempty"`
 	Get            GetParameters `json:"get,omitempty"`
 }
 
