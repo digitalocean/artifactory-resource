@@ -10,6 +10,10 @@ import (
 func Get(req GetRequest, dir string) (GetResponse, error) {
 	var res GetResponse
 
+	if req.Version.Empty() {
+		return res, nil
+	}
+
 	c, err := newClient(req.Source)
 	if err != nil {
 		log.Println(err)

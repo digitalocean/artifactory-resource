@@ -37,6 +37,15 @@ func (v *Version) Pattern() string {
 	return fmt.Sprintf("%s/%s/%s", v.Repo, v.Path, v.Name)
 }
 
+// Empty returns true if the version is empty
+func (v *Version) Empty() bool {
+	if v.Repo == "" || v.Path == "" {
+		return true
+	}
+
+	return false
+}
+
 // CheckRequest is the data struct received from Concoruse by the resource check operation
 type CheckRequest struct {
 	Source  Source  `json:"source"`
@@ -91,11 +100,12 @@ func (r GetResponse) Write() error {
 
 // PutParameters for the resource
 type PutParameters struct {
-	Pattern        string        `json:"pattern"`
-	Target         string        `json:"target"`
-	RepositoryPath string        `json:"repo_path,omitempty"`
-	Repository     string        `json:"repo,omitempty"`
-	Get            GetParameters `json:"get,omitempty"`
+	Pattern        string        `json:"pattern"`              // Pattern to find artifacts within inputs
+	Target         string        `json:"target"`               // Target to upload artifacts too
+	MinimumUpload  int           `json:"min_upload,omitempty"` // MinimumUpload sets the minimum number of uploads expected & will error if not met
+	RepositoryPath string        `json:"repo_path,omitempty"`  // RepositoryPath sets the path to the input containing the repository (git support only)
+	Repository     string        `json:"repo,omitempty"`       // Repository set the repository url explicitly for compatibility with the git resource
+	Get            GetParameters `json:"get,omitempty"`        // Get parameters for explicit get step after put
 }
 
 // PutRequest is the data struct received from Concoruse by the resource put operation
