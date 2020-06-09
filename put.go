@@ -27,23 +27,24 @@ func Put(req PutRequest, dir string) (GetResponse, error) {
 		return get, err
 	}
 
-	log.Println(dir)
+	log.Println("working directory:", dir)
+	log.Printf("put parameters: %+v", req.Params)
 
-	b := buildInfo(filepath.Join(dir, req.Params.RepositoryPath), req.Params.Repository)
-	err = c.PublishBuildInfo(b)
-	if err != nil {
-		log.Println(err)
-		return get, err
-	}
-	rlog.StdErr("build published", []string{b.Name, b.Number})
+	b := buildInfo(req.Params)
 
 	props := properties(b)
+	if req.Params.Properties != "" {
+		err = props.FromFile(req.Params.Properties)
+		if err != nil {
+			rlog.StdErr("failed to read properties file", err)
+		}
+	}
 
-	rlog.StdErr("pattern", filepath.Join(dir, req.Params.Pattern))
-	rlog.StdErr("target", req.Params.Target)
+	pattern := filepath.Join(dir, req.Params.Pattern)
+	rlog.StdErr("pattern", pattern)
 	rlog.StdErr("artifact properties", props)
 
-	artifacts, uploaded, err := c.UploadItems(filepath.Join(dir, req.Params.Pattern), req.Params.Target, props)
+	artifacts, uploaded, err := c.UploadItems(pattern, req.Params.Target, props)
 	if err != nil {
 		rlog.StdErr("failed to upload", err)
 		log.Println(err)
@@ -59,20 +60,30 @@ func Put(req PutRequest, dir string) (GetResponse, error) {
 
 	rlog.StdErr("upload count", uploaded)
 
+	mod := buildinfo.Module{Id: moduleID(req.Params.Module, b.Name), Artifacts: []buildinfo.Artifact{}}
+
 	for _, a := range artifacts {
+		mod.Artifacts = append(mod.Artifacts, a.ToBuildArtifacts())
 		rlog.StdErr("artifact uploaded", a)
 	}
+
+	b.Modules = []buildinfo.Module{mod}
+
+	err = c.PublishBuildInfo(b)
+	if err != nil {
+		log.Println(err)
+		return get, err
+	}
+	rlog.StdErr("build published", []string{b.Name, b.Number})
 
 	return get, nil
 }
 
 func properties(b buildinfo.BuildInfo) artifactory.Properties {
 	props := artifactory.Properties{
-		artifactory.Property{
-			Name:  "build.name",
-			Value: b.Name,
-		},
+		artifactory.Property{Name: "build.name", Value: b.Name},
 		artifactory.Property{Name: "build.number", Value: b.Number},
+		artifactory.Property{Name: "build.started", Value: b.Started},
 	}
 
 	if b.Vcs != nil {
@@ -83,16 +94,30 @@ func properties(b buildinfo.BuildInfo) artifactory.Properties {
 	return props
 }
 
-func buildInfo(path, repo string) buildinfo.BuildInfo {
+func buildInfo(params PutParameters) buildinfo.BuildInfo {
 	b := buildinfo.BuildInfo{
 		Name:       os.Getenv("BUILD_TEAM_NAME") + "-" + os.Getenv("BUILD_PIPELINE_NAME") + "-" + os.Getenv("BUILD_JOB_NAME"),
 		Number:     os.Getenv("BUILD_ID"),
 		Started:    time.Now().Format("2006-01-02T15:04:05.000-0700"),
-		BuildAgent: &buildinfo.Agent{Name: "Concourse"},
+		Agent:      &buildinfo.Agent{Name: "Concourse"},
+		BuildAgent: &buildinfo.Agent{Name: "digitalocean/artifactory-resource"},
+		BuildUrl:   os.Getenv("ATC_EXTERNAL_URL") + "/builds/" + os.Getenv("BUILD_ID"),
 	}
 
-	if path != "" {
-		b.Vcs = vcsInfo(path, repo)
+	if params.BuildEnv != "" {
+		p := artifactory.Properties{}
+		err := p.FromFile(params.BuildEnv)
+		if err != nil {
+			rlog.StdErr("failed to read build environment file", err)
+		}
+
+		log.Println("build env:", p)
+
+		b.Properties = p.Env()
+	}
+
+	if params.RepositoryPath != "" {
+		b.Vcs = vcsInfo(params.RepositoryPath, params.Repository)
 	}
 
 	return b
@@ -133,4 +158,12 @@ func vcsInfo(path, repo string) *buildinfo.Vcs {
 	}
 
 	return &vcs
+}
+
+func moduleID(m, b string) string {
+	if m != "" {
+		return m
+	}
+
+	return b
 }

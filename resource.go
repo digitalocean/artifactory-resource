@@ -28,7 +28,7 @@ func (s Source) Validate() error {
 type Version struct {
 	Repo     string    `json:"repo"`
 	Path     string    `json:"path"`
-	Name     string    `json:"string"`
+	Name     string    `json:"name"`
 	Modified time.Time `json:"modified"`
 }
 
@@ -100,12 +100,17 @@ func (r GetResponse) Write() error {
 
 // PutParameters for the resource
 type PutParameters struct {
-	Pattern        string        `json:"pattern"`              // Pattern to find artifacts within inputs
-	Target         string        `json:"target"`               // Target to upload artifacts too
-	MinimumUpload  int           `json:"min_upload,omitempty"` // MinimumUpload sets the minimum number of uploads expected & will error if not met
-	RepositoryPath string        `json:"repo_path,omitempty"`  // RepositoryPath sets the path to the input containing the repository (git support only)
-	Repository     string        `json:"repo,omitempty"`       // Repository set the repository url explicitly for compatibility with the git resource
-	Get            GetParameters `json:"get,omitempty"`        // Get parameters for explicit get step after put
+	Pattern        string        `json:"pattern"`               // Pattern to find artifacts within inputs
+	Target         string        `json:"target"`                // Target to upload artifacts too
+	Module         string        `json:"module,omitempty"`      // Module ID to associate the artifacts of the build to
+	BuildEnv       string        `json:"build_env,omitempty"`   // BuildEnv is path to file containing build environment values in `key=value\n` form, e.g. `env > env.txt`
+	EnvInclude     string        `json:"env_include,omitempty"` // EnvInclude case insensitive patterns in the form of "value1;value2;..." will be included
+	EnvExclude     string        `json:"env_exclude,omitempty"` // EnvExclude case insensitive patterns in the form of "value1;value2;..." will be excluded, defaults to `*password*;*psw*;*secret*;*key*;*token*`
+	Properties     string        `json:"properties,omitempty"`  // Properties is path to file containing artifact properties in `key=value\n` form
+	MinimumUpload  int           `json:"min_upload,omitempty"`  // MinimumUpload sets the minimum number of uploads expected & will error if not met
+	RepositoryPath string        `json:"repo_path,omitempty"`   // RepositoryPath sets the path to the input containing the repository (git support only)
+	Repository     string        `json:"repo,omitempty"`        // Repository set the repository url explicitly for compatibility with the git resource
+	Get            GetParameters `json:"get,omitempty"`         // Get parameters for explicit get step after put
 }
 
 // PutRequest is the data struct received from Concoruse by the resource put operation
