@@ -30,11 +30,11 @@ func Put(req PutRequest, dir string) (GetResponse, error) {
 	log.Println("working directory:", dir)
 	log.Printf("put parameters: %+v", req.Params)
 
-	b := buildInfo(req.Params)
+	b := buildInfo(req.Params, dir)
 
 	props := properties(b)
 	if req.Params.Properties != "" {
-		err = props.FromFile(req.Params.Properties)
+		err = props.FromFile(filepath.Join(dir, req.Params.Properties))
 		if err != nil {
 			rlog.StdErr("failed to read properties file", err)
 		}
@@ -94,7 +94,7 @@ func properties(b buildinfo.BuildInfo) artifactory.Properties {
 	return props
 }
 
-func buildInfo(params PutParameters) buildinfo.BuildInfo {
+func buildInfo(params PutParameters, dir string) buildinfo.BuildInfo {
 	b := buildinfo.BuildInfo{
 		Name:       os.Getenv("BUILD_TEAM_NAME") + "-" + os.Getenv("BUILD_PIPELINE_NAME") + "-" + os.Getenv("BUILD_JOB_NAME"),
 		Number:     os.Getenv("BUILD_ID"),
@@ -106,7 +106,7 @@ func buildInfo(params PutParameters) buildinfo.BuildInfo {
 
 	if params.BuildEnv != "" {
 		p := artifactory.Properties{}
-		err := p.FromFile(params.BuildEnv)
+		err := p.FromFile(filepath.Join(dir, params.BuildEnv))
 		if err != nil {
 			rlog.StdErr("failed to read build environment file", err)
 		}
@@ -117,7 +117,7 @@ func buildInfo(params PutParameters) buildinfo.BuildInfo {
 	}
 
 	if params.RepositoryPath != "" {
-		b.Vcs = vcsInfo(params.RepositoryPath, params.Repository)
+		b.Vcs = vcsInfo(filepath.Join(dir, params.RepositoryPath), params.Repository)
 	}
 
 	return b
@@ -125,6 +125,8 @@ func buildInfo(params PutParameters) buildinfo.BuildInfo {
 
 func vcsInfo(path, repo string) *buildinfo.Vcs {
 	vcs := buildinfo.Vcs{}
+
+	log.Println("vcs path:", path)
 
 	g := git.Client{}
 	r, err := g.Open(path)
