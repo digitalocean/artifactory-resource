@@ -6,7 +6,7 @@ require (
 	github.com/Masterminds/goutils v1.1.0 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
-	github.com/digitalocean/concourse-resource-library v0.0.0-20200609194253-d9bff0a8aa49
+	github.com/digitalocean/concourse-resource-library v0.0.0-20200609194825-9f6c85db7175
 	github.com/fatih/color v1.9.0 // indirect
 	github.com/go-bindata/go-bindata v3.1.2+incompatible // indirect
 	github.com/go-git/go-git/v5 v5.0.0 // indirect

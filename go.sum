@@ -61,6 +61,8 @@ github.com/digitalocean/concourse-resource-library v0.0.0-20200605170519-0f6c82c
 github.com/digitalocean/concourse-resource-library v0.0.0-20200605170519-0f6c82cd33c9/go.mod h1:Mqh2iGQjXDCo2FMeHIHfgCJgNuY29enIfwNhXd7LtBg=
 github.com/digitalocean/concourse-resource-library v0.0.0-20200609194253-d9bff0a8aa49 h1:lJJsB1Ru3+SqHT+fjcyGaTc/+nkN9b/O3IQNlWWAUc4=
 github.com/digitalocean/concourse-resource-library v0.0.0-20200609194253-d9bff0a8aa49/go.mod h1:Mqh2iGQjXDCo2FMeHIHfgCJgNuY29enIfwNhXd7LtBg=
+github.com/digitalocean/concourse-resource-library v0.0.0-20200609194825-9f6c85db7175 h1:K37dbYXcBWNENiIjd3nJ6DGY/F+oyABwLsum4k0GWGw=
+github.com/digitalocean/concourse-resource-library v0.0.0-20200609194825-9f6c85db7175/go.mod h1:Mqh2iGQjXDCo2FMeHIHfgCJgNuY29enIfwNhXd7LtBg=
 github.com/dsnet/compress v0.0.1 h1:PlZu0n3Tuv04TzpfPbrnI0HW/YwodEXDS+oPKahKF0Q=
 github.com/dsnet/compress v0.0.1/go.mod h1:Aw8dCMJ7RioblQeTqt88akK31OvO8Dhf5JflhBbQEHo=
 github.com/dsnet/golib v0.0.0-20171103203638-1ea166775780/go.mod h1:Lj+Z9rebOhdfkVLjJ8T6VcRQv3SXugXy999NBtR9aFY=
