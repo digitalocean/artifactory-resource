@@ -21,6 +21,11 @@ func main() {
 		log.Fatalf("failed to read request input: %s", err)
 	}
 
+	err = request.Source.Validate()
+	if err != nil {
+		log.Fatalf("invalid source config: %s", err)
+	}
+
 	if len(os.Args) < 2 {
 		log.Fatalf("missing arguments")
 	}

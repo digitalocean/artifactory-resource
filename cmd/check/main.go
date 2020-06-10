@@ -20,6 +20,11 @@ func main() {
 		log.Fatalf("failed to read request input: %s", err)
 	}
 
+	err = request.Source.Validate()
+	if err != nil {
+		log.Fatalf("invalid source config: %s", err)
+	}
+
 	response, err := resource.Check(request)
 	if err != nil {
 		log.Fatalf("failed to perform check: %s", err)
