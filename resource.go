@@ -67,6 +67,8 @@ type Source struct {
 // Validate ensures that the source configuration is valid
 func (s *Source) Validate() error {
 	switch {
+	case s.Endpoint == "":
+		return errors.New("endpoint is required")
 	case s.User != "" && s.Password == "" && s.APIKey == "" && s.AccessToken == "":
 		return errors.New("user cannot be defined without a Password || AccessToken || APIKey")
 	case s.AQL.Raw == "" && s.AQL.Repo == "" && (s.AQL.Path == "" || s.AQL.Name == ""):
