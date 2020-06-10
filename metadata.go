@@ -18,7 +18,6 @@ func metadata(a artifactory.Artifact) meta.Metadata {
 	m.Add("LocalPath", strings.TrimPrefix(a.File.LocalPath, "/tmp/build/get/"))
 	if a.File.FileHashes != nil {
 		m.Add("SHA1", a.File.Sha1)
-		m.Add("SHA256", a.File.Sha256)
 	}
 
 	m.Add("Created", a.Item.Created)

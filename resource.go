@@ -2,12 +2,57 @@ package resource
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"time"
 
 	m "github.com/digitalocean/concourse-resource-library/metadata"
 )
+
+// AQL provides the version query structure
+type AQL struct {
+	Raw  string `json:"raw,omitempty"`  // AQL to filter versions on
+	Repo string `json:"repo,omitempty"` // Artifactory repository to search
+	Path string `json:"path,omitempty"` // Artifactory repository sub-path to match
+	Name string `json:"name,omitempty"` // Artifactory artifact name to match
+}
+
+// UnmarshalJSON custom unmarshaller to convert PR number
+func (a *AQL) UnmarshalJSON(data []byte) error {
+	type Alias AQL
+	aux := struct {
+		*Alias
+	}{
+		Alias: (*Alias)(a),
+	}
+
+	err := json.Unmarshal(data, &aux)
+	if err != nil {
+		return err
+	}
+
+	if aux.Raw == "" && aux.Repo != "" {
+		aux.Raw = fmt.Sprintf(`{"repo": "%s", "path": {"$match": "%s"}, "name": {"$match": "%s"}}`, aux.Repo, aux.Path, aux.Name)
+	}
+
+	return nil
+}
+
+// SetModifiedTime appends the version modified time to the raw AQL query
+func (a *AQL) SetModifiedTime(v Version) {
+	if a.Raw == "" {
+		return
+	}
+
+	mod := time.Now().AddDate(-2, 0, 0)
+
+	if !v.Modified.IsZero() {
+		mod = v.Modified
+	}
+
+	a.Raw = fmt.Sprintf(`%s, "modified": {"$gt": "%s"}}`, a.Raw[:len(a.Raw)-1], mod.Format(time.RFC3339))
+}
 
 // Source represents the configuration for the resource
 type Source struct {
@@ -16,11 +61,18 @@ type Source struct {
 	Password    string `json:"password,omitempty"` // Password for Artifactory API with permissions to Repository
 	AccessToken string `json:"access_token"`       // AccessToken for Artifactory API with permissions to Repository
 	APIKey      string `json:"api_key,omitempty"`  // APIKey for Artifactory API with permissions to Repository
-	AQL         string `json:"aql"`                // AQL to filter versions on
+	AQL         AQL    `json:"aql"`                // AQL to filter versions on
 }
 
 // Validate ensures that the source configuration is valid
-func (s Source) Validate() error {
+func (s *Source) Validate() error {
+	switch {
+	case s.User != "" && s.Password == "" && s.APIKey == "" && s.AccessToken == "":
+		return errors.New("user cannot be defined without a Password || AccessToken || APIKey")
+	case s.AQL.Raw == "" && s.AQL.Repo == "" && (s.AQL.Path == "" || s.AQL.Name == ""):
+		return errors.New("aql cannot be defined without a Password || AccessToken || APIKey")
+	}
+
 	return nil
 }
 
