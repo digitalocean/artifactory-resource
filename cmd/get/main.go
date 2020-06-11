@@ -1,14 +1,12 @@
 package main
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
 
 	resource "github.com/digitalocean/artifactory-resource"
 	rlog "github.com/digitalocean/concourse-resource-library/log"
-	"github.com/digitalocean/concourse-resource-library/metadata"
 	jlog "github.com/jfrog/jfrog-client-go/utils/log"
 )
 
@@ -40,7 +38,7 @@ func main() {
 	}
 
 	// write metadata to output dir
-	err = writeMetadataFile(response.Metadata, dir)
+	err = response.Metadata.ToFiles(filepath.Join(dir, "resource"))
 	if err != nil {
 		log.Fatalf("failed to write metadata.json: %s", err)
 	}
@@ -51,19 +49,4 @@ func main() {
 	}
 
 	log.Println("Get complete")
-}
-
-func writeMetadataFile(m metadata.Metadata, dir string) error {
-	data, err := m.JSON()
-	if err != nil {
-		return err
-	}
-
-	os.MkdirAll(filepath.Join(dir, "resource"), os.ModePerm)
-	err = ioutil.WriteFile(filepath.Join(dir, "resource", "metadata.json"), data, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
