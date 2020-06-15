@@ -38,6 +38,7 @@ func main() {
 	}
 
 	// write metadata to output dir
+	os.MkdirAll(filepath.Join(dir, "resource"), os.ModePerm)
 	err = response.Metadata.ToFiles(filepath.Join(dir, "resource"))
 	if err != nil {
 		log.Fatalf("failed to write metadata.json: %s", err)
