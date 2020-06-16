@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/digitalocean/artifactory-resource/internal"
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
 	. "github.com/poy/onpar/expect"
 	. "github.com/poy/onpar/matchers"
@@ -36,7 +37,7 @@ func TestProcessItem(t *testing.T) {
 				Repo:     "artifact-local",
 				Path:     "some/path",
 				Name:     "artifact",
-				Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+				Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 			},
 			expectError: true,
 		},
@@ -54,7 +55,7 @@ func TestProcessItem(t *testing.T) {
 				Repo:     "artifact-local",
 				Path:     "some/path",
 				Name:     "artifact",
-				Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+				Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 			},
 			expectError: false,
 		},
@@ -94,7 +95,7 @@ func TestSelectVersions(t *testing.T) {
 				Repo:     "artifact-local",
 				Path:     "some/path",
 				Name:     "artifact",
-				Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+				Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 			},
 			found: CheckResponse{},
 			expected: []Version{
@@ -102,7 +103,7 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 		},
@@ -114,7 +115,7 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 			expected: []Version{
@@ -122,7 +123,7 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 		},
@@ -134,13 +135,13 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 				{
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 			expected: []Version{
@@ -148,7 +149,7 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 		},
@@ -158,20 +159,20 @@ func TestSelectVersions(t *testing.T) {
 				Repo:     "artifact-local",
 				Path:     "some/path",
 				Name:     "artifact",
-				Modified: time.Date(2020, time.May, 25, 20, 0, 0, 0, time.UTC),
+				Modified: internal.GetTimePointer(time.Date(2020, time.May, 25, 20, 0, 0, 0, time.UTC)),
 			},
 			found: []Version{
 				{
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 				{
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 			expected: []Version{
@@ -179,13 +180,13 @@ func TestSelectVersions(t *testing.T) {
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 20, 0, 0, 0, time.UTC)),
 				},
 				{
 					Repo:     "artifact-local",
 					Path:     "some/path",
 					Name:     "artifact",
-					Modified: time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC),
+					Modified: internal.GetTimePointer(time.Date(2020, time.May, 27, 20, 0, 0, 0, time.UTC)),
 				},
 			},
 		},

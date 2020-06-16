@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/digitalocean/artifactory-resource/internal"
 	m "github.com/digitalocean/concourse-resource-library/metadata"
 )
 
@@ -45,7 +46,7 @@ func (a *AQL) SetModifiedTime(v Version) {
 		return
 	}
 
-	mod := time.Now().AddDate(-2, 0, 0)
+	mod := internal.GetTimePointer(time.Now().AddDate(-2, 0, 0))
 
 	if !v.Modified.IsZero() {
 		mod = v.Modified
@@ -80,10 +81,10 @@ func (s *Source) Validate() error {
 
 // Version contains the version data Concourse uses to determine if a build should run
 type Version struct {
-	Repo     string    `json:"repo"`
-	Path     string    `json:"path"`
-	Name     string    `json:"name"`
-	Modified time.Time `json:"modified"`
+	Repo     string     `json:"repo,omitempty"`
+	Path     string     `json:"path,omitempty"`
+	Name     string     `json:"name,omitempty"`
+	Modified *time.Time `json:"modified,omitempty"`
 }
 
 // Pattern returns the string needed to fetch the artifact

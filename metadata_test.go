@@ -18,7 +18,7 @@ func TestMetadata(t *testing.T) {
 		{
 			description: "empty artifact",
 			input:       artifactory.Artifact{File: utils.FileInfo{}, Item: utils.ResultItem{}},
-			expected:    `[{"name":"ArtifactoryPath","value":""},{"name":"LocalPath","value":""},{"name":"Created","value":""},{"name":"Modified","value":""},{"name":"Name","value":""},{"name":"Repo","value":""},{"name":"Size","value":"0"},{"name":"Type","value":""},{"name":"Properties","value":"null"}]`,
+			expected:    `[{"name":"artifactory-path","value":""},{"name":"local-path","value":""},{"name":"created","value":""},{"name":"modified","value":""},{"name":"name","value":""},{"name":"repo","value":""},{"name":"size","value":"0"},{"name":"type","value":""},{"name":"properties","value":"null"}]`,
 		},
 		{
 			description: "filled properties",
@@ -30,7 +30,7 @@ func TestMetadata(t *testing.T) {
 					},
 				},
 			},
-			expected: `[{"name":"ArtifactoryPath","value":""},{"name":"LocalPath","value":""},{"name":"Created","value":""},{"name":"Modified","value":""},{"name":"Name","value":""},{"name":"Repo","value":""},{"name":"Size","value":"0"},{"name":"Type","value":""},{"name":"Properties","value":"[{\"Key\":\"vcs.revision\",\"Value\":\"xxxxx\"}]"}]`,
+			expected: `[{"name":"artifactory-path","value":""},{"name":"local-path","value":""},{"name":"created","value":""},{"name":"modified","value":""},{"name":"name","value":""},{"name":"repo","value":""},{"name":"size","value":"0"},{"name":"type","value":""},{"name":"properties","value":"[{\"Key\":\"vcs.revision\",\"Value\":\"xxxxx\"}]"}]`,
 		},
 	}
 

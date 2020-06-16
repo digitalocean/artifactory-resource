@@ -62,7 +62,7 @@ func processItem(i utils.ResultItem) (Version, error) {
 		return v, err
 	}
 
-	v = Version{Repo: i.Repo, Path: i.Path, Name: i.Name, Modified: m}
+	v = Version{Repo: i.Repo, Path: i.Path, Name: i.Name, Modified: &m}
 
 	return v, nil
 }

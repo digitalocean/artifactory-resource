@@ -12,23 +12,23 @@ import (
 func metadata(a artifactory.Artifact) meta.Metadata {
 	var m meta.Metadata
 
-	m.Add("ArtifactoryPath", a.File.ArtifactoryPath)
+	m.Add("artifactory-path", a.File.ArtifactoryPath)
 
 	// trim `/tmp/build/get/` as that path is only available during the `get` step
-	m.Add("LocalPath", strings.TrimPrefix(a.File.LocalPath, "/tmp/build/get/"))
+	m.Add("local-path", strings.TrimPrefix(a.File.LocalPath, "/tmp/build/get/"))
 	if a.File.FileHashes != nil {
-		m.Add("SHA1", a.File.Sha1)
+		m.Add("sha1", a.File.Sha1)
 	}
 
-	m.Add("Created", a.Item.Created)
-	m.Add("Modified", a.Item.Modified)
-	m.Add("Name", a.Item.Name)
-	m.Add("Repo", a.Item.Repo)
-	m.Add("Size", strconv.FormatInt(a.Item.Size, 10))
-	m.Add("Type", a.Item.Type)
+	m.Add("created", a.Item.Created)
+	m.Add("modified", a.Item.Modified)
+	m.Add("name", a.Item.Name)
+	m.Add("repo", a.Item.Repo)
+	m.Add("size", strconv.FormatInt(a.Item.Size, 10))
+	m.Add("type", a.Item.Type)
 
 	props, _ := json.Marshal(a.Item.Properties)
-	m.Add("Properties", string(props))
+	m.AddJSON("properties", string(props))
 
 	return m
 }

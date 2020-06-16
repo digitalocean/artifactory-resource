@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/digitalocean/artifactory-resource/internal"
 	. "github.com/poy/onpar/expect"
 	. "github.com/poy/onpar/matchers"
 )
@@ -24,7 +25,7 @@ func TestAddModifiedTime(t *testing.T) {
 		{
 			description: "simple",
 			aql:         AQL{Raw: `{"repo": "artifacts-local", "path": {"$match" : "changeset/*"}, "name": "artifact"}`},
-			version:     Version{Modified: time.Date(2020, time.May, 26, 0, 0, 0, 0, time.UTC)},
+			version:     Version{Modified: internal.GetTimePointer(time.Date(2020, time.May, 26, 0, 0, 0, 0, time.UTC))},
 			expected:    `{"repo": "artifacts-local", "path": {"$match" : "changeset/*"}, "name": "artifact", "modified": {"$gt": "2020-05-26T00:00:00Z"}}`,
 		},
 	}
