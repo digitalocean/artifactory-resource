@@ -18,3 +18,15 @@ jobs:
         golint ./...
     - name: go test
       run: go test -v -cover ./...
+  build-push:
+    name: Build & Push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Build and push Docker images
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_HUB_USER }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        repository: digitalocean/artifactory-resource
+        tag_with_ref: true

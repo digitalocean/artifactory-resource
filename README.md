@@ -4,7 +4,7 @@ Concourse resource for triggering, getting and putting new versions of artifacts
 
 ## Config
 
-Complete source configuration details can be found in the `resource.go` file for the `Source` struct.
+Complete source configuration details can be viewed in GoDoc on the [Source struct](https://godoc.org/github.com/digitalocean/artifactory-resource#Source)
 
 ## Check
 
@@ -15,11 +15,11 @@ performant.
 ## Get
 
 Get will download an artifact to the input directory defined along with metadata for the artifact. The artifact is downloaded following its internal Artifactory path, so the `resource/local-path` metadata file is useful
-to provide the specific path within the input directory to the downloaded artifact.
+to provide the specific path within the input directory to the downloaded artifact. View GoDoc for [GetParameter options](https://godoc.org/github.com/digitalocean/artifactory-resource#GetParameters)
 
 ## Put
 
-Put supports publishing 1 or more artifacts using glob style patterns to locate artifacts to publish.
+Put supports publishing 1 or more artifacts using glob style patterns to locate artifacts to publish. View GoDoc for [PutParameter options](https://godoc.org/github.com/digitalocean/artifactory-resource#PutParameters)
 
 ## Examples
 

@@ -48,11 +48,11 @@ func (a *AQL) SetModifiedTime(v Version) {
 
 	mod := internal.GetTimePointer(time.Now().AddDate(-2, 0, 0))
 
-	if !v.Modified.IsZero() {
+	if v.Modified != nil && !v.Modified.IsZero() {
 		mod = v.Modified
 	}
 
-	a.Raw = fmt.Sprintf(`%s, "modified": {"$gt": "%s"}}`, a.Raw[:len(a.Raw)-1], mod.Format(time.RFC3339))
+	a.Raw = fmt.Sprintf(`%s, "modified": {"$gt": "%s"}}`, a.Raw[:len(a.Raw)-1], mod.Format(time.RFC3339Nano))
 }
 
 // Source represents the configuration for the resource
