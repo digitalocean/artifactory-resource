@@ -67,6 +67,22 @@ func Put(req PutRequest, dir string) (GetResponse, error) {
 		rlog.StdErr("artifact uploaded", a)
 	}
 
+	if len(artifacts) > 0 {
+		first, err := c.SearchItem(artifacts[0].InternalArtifactoryPath)
+		if err != nil {
+			rlog.StdErr("failed to search", err)
+			log.Println(err)
+			return get, err
+		}
+
+		get.Version, err = processItem(first)
+		if err != nil {
+			return get, err
+		}
+	}
+
+	// TODO maybe metadata?
+
 	b.Modules = []buildinfo.Module{mod}
 
 	err = c.PublishBuildInfo(b)
